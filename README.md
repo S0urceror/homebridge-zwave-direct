@@ -1,8 +1,11 @@
 #Homebridge ZWave Direct
+
 Homebridge plugin that communicates directly with ZWave devices via OpenZWave librariesplugin that communicates directly with ZWave devices via OpenZWave libraries
 
 ## Features
 Currently support the following devices:
+- BINARY_SENSOR
+- BINARY_SWITCH
 
 
 ## Installation
