@@ -13,6 +13,8 @@ Currently support the following devices:
 
 ## Sample Configuration
 
+Please specify to which serial device your USB stick is connected.
+
 "platforms": [
     {
       "platform": "zwave-direct",
