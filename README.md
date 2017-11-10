@@ -4,8 +4,8 @@ Homebridge plugin that communicates directly with ZWave devices via OpenZWave li
 
 ## Features
 Currently support the following devices:
-- BINARY_SENSOR
-- BINARY_SWITCH
+- BINARY_SENSOR, like motion sensors
+- BINARY_SWITCH, like mains switches
 
 
 ## Installation
