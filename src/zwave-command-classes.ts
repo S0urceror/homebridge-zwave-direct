@@ -1,0 +1,2 @@
+export const COMMAND_CLASS_BINARY_SWITCH = 0x25 // 37
+export const COMMAND_CLASS_BINARY_SENSOR = 0x30 // 48
