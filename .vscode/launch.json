@@ -12,7 +12,8 @@
             "args": ["-P",".","-D"],
             "outFiles": [
                 "dist"
-            ]
+            ],
+            "console": "integratedTerminal"
         }
     ]
 }

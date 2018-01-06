@@ -1,14 +1,16 @@
 'use strict';
 Object.defineProperty(exports, "__esModule", { value: true });
 const zcc = require("./zwave-command-classes");
-const index_1 = require("./index");
-const index_2 = require("./index");
+const hap = require("hap-nodejs");
 class ZWaveDevice {
-    constructor(accessory, zwave) {
-        this.accessory = accessory;
-        this.id = accessory.context.deviceId;
+    constructor(homekitaccessory, zwave) {
+        this.accessory = homekitaccessory;
+        this.id = homekitaccessory.context.deviceId;
         this.zwave = zwave;
         this.configure();
+    }
+    getHomekitAccessory() {
+        return this.accessory;
     }
     identify(paired, callback) {
         this.zwave.log.debug("identify: %s", this.accessory.displayName);
@@ -21,16 +23,16 @@ class ZWaveSwitch extends ZWaveDevice {
         super(accessory, zwave);
     }
     configure() {
-        const switchService = this.accessory.getService(index_1.Service.Switch);
+        const switchService = this.accessory.getService(hap.Service.Switch);
         if (!switchService)
             return;
-        switchService.getCharacteristic(index_2.Characteristic.On)
+        switchService.getCharacteristic(hap.Characteristic.On)
             .on('get', this.getSwitch.bind(this))
             .on('set', this.setSwitch.bind(this));
     }
     update(nodevalue) {
         if (nodevalue.class_id == zcc.COMMAND_CLASS_BINARY_SWITCH)
-            this.accessory.getService(index_1.Service.Switch).getCharacteristic(index_2.Characteristic.On).updateValue(nodevalue.value, null);
+            this.accessory.getService(hap.Service.Switch).getCharacteristic(hap.Characteristic.On).updateValue(nodevalue.value, null);
     }
     getSwitch(callback) {
         if (this.zwave.zwavenodes[this.id].ready) {
@@ -61,21 +63,21 @@ class ZWaveSwitch extends ZWaveDevice {
     }
 }
 exports.ZWaveSwitch = ZWaveSwitch;
-class ZWaveMotionSensor extends ZWaveDevice {
+class ZWaveContactSensor extends ZWaveDevice {
     constructor(accessory, zwave) {
         super(accessory, zwave);
     }
     configure() {
-        const switchService = this.accessory.getService(index_1.Service.ZWaveMotionSensor);
+        const switchService = this.accessory.getService(hap.Service.ContactSensor);
         if (!switchService)
             return;
-        switchService.getCharacteristic(index_2.Characteristic.MotionDetected).on('get', this.getSwitch.bind(this));
+        switchService.getCharacteristic(hap.Characteristic.ContactSensorState).on('get', this.getState.bind(this));
     }
     update(nodevalue) {
         if (nodevalue.class_id == zcc.COMMAND_CLASS_BINARY_SENSOR)
-            this.accessory.getService(index_1.Service.MotionSensor).getCharacteristic(index_2.Characteristic.MotionDetected).updateValue(nodevalue.value, null);
+            this.accessory.getService(hap.Service.ContactSensor).getCharacteristic(hap.Characteristic.ContactSensorState).updateValue(nodevalue.value, null);
     }
-    getSwitch(callback) {
+    getState(callback) {
         if (this.zwave.zwavenodes[this.id].ready) {
             if (this.zwave.zwavenodes[this.id].zwavevalues.get(zcc.COMMAND_CLASS_BINARY_SENSOR)) {
                 let values = this.zwave.zwavenodes[this.id].zwavevalues.get(zcc.COMMAND_CLASS_BINARY_SENSOR);
@@ -91,5 +93,36 @@ class ZWaveMotionSensor extends ZWaveDevice {
         callback(null, false);
     }
 }
-exports.ZWaveMotionSensor = ZWaveMotionSensor;
+exports.ZWaveContactSensor = ZWaveContactSensor;
+class ZWaveMultilevelSensor extends ZWaveDevice {
+    constructor(accessory, zwave) {
+        super(accessory, zwave);
+    }
+    configure() {
+        const service = this.accessory.getService(hap.Service.TemperatureSensor);
+        if (!service)
+            return;
+        service.getCharacteristic(hap.Characteristic.CurrentTemperature).on('get', this.getState.bind(this));
+    }
+    update(nodevalue) {
+        if (nodevalue.class_id == zcc.COMMAND_CLASS_SENSOR_MULTILEVEL)
+            this.accessory.getService(hap.Service.TemperatureSensor).getCharacteristic(hap.Characteristic.CurrentTemperature).updateValue(nodevalue.value, null);
+    }
+    getState(callback) {
+        if (this.zwave.zwavenodes[this.id].ready) {
+            if (this.zwave.zwavenodes[this.id].zwavevalues.get(zcc.COMMAND_CLASS_SENSOR_MULTILEVEL)) {
+                let values = this.zwave.zwavenodes[this.id].zwavevalues.get(zcc.COMMAND_CLASS_SENSOR_MULTILEVEL);
+                for (let value of values) {
+                    if (!this.accessory.reachable)
+                        this.accessory.updateReachability(true);
+                    callback(null, value.value);
+                    return;
+                }
+            }
+        }
+        this.accessory.updateReachability(false);
+        callback(null, false);
+    }
+}
+exports.ZWaveMultilevelSensor = ZWaveMultilevelSensor;
 //# sourceMappingURL=zwavedevice.js.map
