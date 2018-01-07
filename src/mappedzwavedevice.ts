@@ -5,6 +5,7 @@ import {NodeValueClass} from "./index"
 
 /// <reference path="index.d.ts" />
 import * as hap from "hap-nodejs"
+
 import * as zcc from "./zwave-command-classes"
 
 export class MappedZWaveDevice {
