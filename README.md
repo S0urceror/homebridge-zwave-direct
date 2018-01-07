@@ -27,6 +27,7 @@ The config file allows to set emptyhomebridgecache to true, to flush all ZWave d
 
 New in this version is the ability to specify hinted devices. In a ZWave network battery operated devices are most of time sleeping and not continuously advertising their presence and capabilities. This way they would never appear in HomeKit. This way we can specify what type of device it is and which capabilities it has. The Zwave bridge will then map the right HomeKit types to the ZWave command-classes. 
 
+```
 "platforms": [
     {
       "platform": "zwave-direct",
@@ -45,6 +46,7 @@ New in this version is the ability to specify hinted devices. In a ZWave network
       }
     }
 ]
+```
 
 ## Credits
 The guys over at OpenZWave for creating the libs, nodejs client and typescript definitions.
