@@ -88,10 +88,6 @@ class ZWave {
     zwave_driverFailed() {
         this.log.error("driver failed");
     }
-    zwave_notification(nodeid, notif, help) {
-        this.log.debug("notification [nodeid: %d, notification: %d]", nodeid, notif);
-        this.zwavenodes[nodeid].lastnotification = notif;
-    }
     zwave_addNode(nodeid) {
         this.log.debug("node added [nodeid: %d]", nodeid);
         this.zwavenodes[nodeid] = new zwaveNode();
@@ -99,20 +95,32 @@ class ZWave {
         this.zwavenodes[nodeid].zwavevalues = new Map();
         this.zwavenodes[nodeid].ready = false;
     }
+    zwave_notification(nodeid, notif, help) {
+        this.log.debug("notification [nodeid: %d, notification: %d]", nodeid, notif);
+        if (!this.zwavenodes[nodeid])
+            return;
+        this.zwavenodes[nodeid].lastnotification = notif;
+    }
     zwave_addValue(nodeid, comclass, nodevalue) {
         this.log.debug("value added [nodeid: %d, comclass: %d, index: %d, ready: %s]", nodeid, comclass, nodevalue.index, this.zwavenodes[nodeid].ready);
+        if (!this.zwavenodes[nodeid])
+            return;
         if (!this.zwavenodes[nodeid].zwavevalues.get(comclass))
             this.zwavenodes[nodeid].zwavevalues.set(comclass, new Array());
         this.zwavenodes[nodeid].zwavevalues.get(comclass)[nodevalue.index] = nodevalue;
     }
     zwave_readyNode(nodeid, nodeinfo) {
         this.log.debug("node ready [nodeid: %d, nodetype: %s, manufacturer: %s]", nodeid, nodeinfo.type, nodeinfo.manufacturer);
+        if (!this.zwavenodes[nodeid])
+            return;
         this.zwavenodes[nodeid].zwavenode = nodeinfo;
         this.zwavenodes[nodeid].ready = true;
         this.zwave_addHomeKitAccessory(nodeid, nodeinfo.type, nodeinfo.product);
     }
     zwave_changeValue(nodeid, comclass, nodevalue) {
         this.log.debug("value changed [nodeid: %d, comclass: %d, index: %d, ready: %s]", nodeid, comclass, nodevalue.index, this.zwavenodes[nodeid].ready);
+        if (!this.zwavenodes[nodeid])
+            return;
         this.zwavenodes[nodeid].zwavevalues.get(comclass)[nodevalue.index] = nodevalue;
         let mydevice;
         if (this.mappedzwavedevices.get(nodeid))
@@ -120,6 +128,8 @@ class ZWave {
     }
     zwave_removeValue(nodeid, comclass, index) {
         this.log.debug("value deleted [nodeid: %d, comclass: %d, index: %d]", nodeid, comclass, index);
+        if (!this.zwavenodes[nodeid])
+            return;
         delete this.zwavenodes[nodeid].zwavevalues.get(comclass)[index];
     }
     zwave_addHomeKitAccessory(nodeid, zwave_node_type, name) {

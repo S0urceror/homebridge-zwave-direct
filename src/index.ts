@@ -153,10 +153,6 @@ export class ZWave {
   zwave_driverFailed () {
     this.log.error("driver failed")
   }
-  zwave_notification (nodeid: number, notif: OZW.NotificationType, help: string) {
-    this.log.debug("notification [nodeid: %d, notification: %d]",nodeid,notif)
-    this.zwavenodes[nodeid].lastnotification = notif
-  }
   zwave_addNode (nodeid: number) {
     this.log.debug("node added [nodeid: %d]",nodeid)
     // setup
@@ -165,8 +161,17 @@ export class ZWave {
     this.zwavenodes[nodeid].zwavevalues = new Map()
     this.zwavenodes[nodeid].ready = false
   }
+  zwave_notification (nodeid: number, notif: OZW.NotificationType, help: string) {
+    this.log.debug("notification [nodeid: %d, notification: %d]",nodeid,notif)
+    if (!this.zwavenodes[nodeid])
+      return
+    this.zwavenodes[nodeid].lastnotification = notif
+  }
   zwave_addValue (nodeid: number, comclass: number, nodevalue: OZW.NodeValue) {
     this.log.debug("value added [nodeid: %d, comclass: %d, index: %d, ready: %s]",nodeid, comclass,nodevalue.index,this.zwavenodes[nodeid].ready)
+    if (!this.zwavenodes[nodeid])
+      return
+
     // add initial value
     if (!this.zwavenodes[nodeid].zwavevalues.get(comclass))
       this.zwavenodes[nodeid].zwavevalues.set(comclass,new Array())
@@ -175,13 +180,18 @@ export class ZWave {
   }
   zwave_readyNode (nodeid: number, nodeinfo: OZW.NodeInfo) {
     this.log.debug("node ready [nodeid: %d, nodetype: %s, manufacturer: %s]",nodeid,nodeinfo.type,nodeinfo.manufacturer)
+    if (!this.zwavenodes[nodeid])
+      return
     // update nodeinfo
     this.zwavenodes[nodeid].zwavenode = nodeinfo
     this.zwavenodes[nodeid].ready = true
-    this.zwave_addHomeKitAccessory (nodeid, nodeinfo.type, nodeinfo.product)
+    this.zwave_addHomeKitAccessory (nodeid, nodeinfo.type, nodeinfo.product) 
   }
   zwave_changeValue (nodeid: number, comclass: number, nodevalue: OZW.NodeValue) {
     this.log.debug("value changed [nodeid: %d, comclass: %d, index: %d, ready: %s]",nodeid, comclass,nodevalue.index,this.zwavenodes[nodeid].ready)
+    if (!this.zwavenodes[nodeid])
+      return
+      
     this.zwavenodes[nodeid].zwavevalues.get(comclass)![nodevalue.index]=nodevalue
 
     let mydevice: MappedZWaveDevice
@@ -190,6 +200,9 @@ export class ZWave {
   }
   zwave_removeValue (nodeid: number, comclass: number, index: number) {
     this.log.debug("value deleted [nodeid: %d, comclass: %d, index: %d]",nodeid, comclass, index)
+    if (!this.zwavenodes[nodeid])
+      return
+    
     delete this.zwavenodes[nodeid].zwavevalues.get(comclass)![index]
   }
   

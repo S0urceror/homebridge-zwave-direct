@@ -7,15 +7,17 @@ Currently support the following devices:
 - BINARY_SENSOR, like motion sensors
 - BINARY_SWITCH, like mains switches
 - MULTI_LEVEL_SENSORS, for temperature, humidity, luminosity, power meters
-- SIRENs, show as a switch
+- SIRENs, shown as a switch
 
 It also allow to start inclusion via a virtual Switch Accessory called Inclusion. This will instruct the ZWave stick to start inclusion of a new ZWave device. Typically such a device needs to be put in Inclusion mode (3 rapid clicks on a button)
 
 ## Installation
 
 1. Install Homebridge using: `npm install -g homebridge`
-2. Install this plugin using: `npm install -g homebridge-zwave-direct`
-3. Update your configuration file. See the sample below.
+2. Install this plugin using: `npm install -g git+https://git@github.com/S0urceror/homebridge-zwave-direct.git`
+3. Download and install OpenZWave binaries: ` `
+4. Add the user running homebridge to the dialout group: `sudo usermod -a -G dialout $HOMEBRIDGE_USER`
+5. Update your configuration file. See the sample below.
 
 ## Sample Configuration
 
