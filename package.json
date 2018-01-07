@@ -24,7 +24,6 @@
   "dependencies": {
     "openzwave-shared": "^1.4.0",
     "hap-nodejs": "^0.4.36",
-    "hap-nodejs-community-types": "git+https://github.com/homespun/hap-nodejs-community-types.git",
-    "homebridge": ">=0.2.0"
+    "hap-nodejs-community-types": "git+https://github.com/homespun/hap-nodejs-community-types.git"
   }
 }

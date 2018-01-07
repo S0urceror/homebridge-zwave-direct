@@ -2,8 +2,10 @@
 
 /// <reference path="./openzwave-shared.d.ts"/>
 import * as OpenZwave from "openzwave-shared"
+
 /// <reference path="index.d.ts" />
 import * as hap from "hap-nodejs"
+
 import {MappedZWaveDevice} from "./mappedzwavedevice"
 import { access } from "fs";
 import * as zcc from "./zwave-command-classes"
